@@ -1,0 +1,129 @@
+erDiagram
+
+  AUDIT_LOG {
+    int log_id PK
+    int user_id FK
+    string table_name
+    string action_type
+    datetime action_timestamp
+    string previous_values
+    string new_values
+    int affected_row_id
+  }
+
+  COURSE {
+    int course_id PK
+    string name
+    int credits
+    string type
+  }
+
+  COURSE_ASSIGNMENT {
+    int assignment_id PK
+    int course_id FK
+    int professor_id FK
+    string period_id FK
+  }
+
+  EVALUATION {
+    int evaluation_id PK
+    string type
+    date date
+    int course_id FK
+  }
+
+  ENROLLMENT {
+    int enrollment_id PK
+    int student_id FK
+    int course_id FK
+    string period_id FK
+    date enrollment_date
+    string status
+  }
+
+  NOTE_EVALUATION {
+    int evaluation_id PK
+    int student_id PK
+    float grade
+    string comments
+  }
+
+  PERIOD {
+    string period_id PK
+    date start_date
+    date end_date
+    string status
+  }
+
+  PREREQUISITE {
+    int course_id PK
+    int prerequisite_id PK
+  }
+
+  PROFESSOR {
+    int professor_id PK
+    string first_name
+    string last_name
+    string email
+    string degree
+  }
+
+  ROOM {
+    int room_id PK
+    int capacity
+    string location
+  }
+
+  SCHEDULE {
+    int schedule_id PK
+    string day
+    time start_time
+    time end_time
+    string session_type
+    int room_id FK
+    int course_id FK
+    string period_id FK
+  }
+
+  STUDENT {
+    int student_id PK
+    string first_name
+    string middle_name
+    string last_name
+    string maternal_surname
+    date birth_date
+    string email
+    string status
+  }
+
+  SYSTEM_USER {
+    int user_id PK
+    string full_name
+    string email
+    string position
+    string role
+  }
+
+  %% Academic Relationships
+  STUDENT ||--o{ ENROLLMENT : enrolls
+  COURSE ||--o{ ENROLLMENT : includes
+  PERIOD ||--o{ ENROLLMENT : occurs_in
+
+  COURSE ||--|{ EVALUATION : contains
+  EVALUATION ||--o{ NOTE_EVALUATION : evaluates
+  STUDENT ||--o{ NOTE_EVALUATION : receives
+
+  COURSE ||--o{ SCHEDULE : scheduled
+  PERIOD ||--o{ SCHEDULE : during
+  ROOM ||--o{ SCHEDULE : held_in
+
+  COURSE ||--o{ PREREQUISITE : requires
+  COURSE ||--o{ PREREQUISITE : is_prerequisite_of
+
+  %% Professor-Course Assignment
+  PROFESSOR ||--o{ COURSE_ASSIGNMENT : teaches
+  COURSE ||--o{ COURSE_ASSIGNMENT : assigned_to
+  PERIOD ||--o{ COURSE_ASSIGNMENT : during
+
+  %% System Audit
+  SYSTEM_USER ||--o{ AUDIT_LOG : logs
