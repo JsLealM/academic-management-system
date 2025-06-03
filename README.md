@@ -24,12 +24,12 @@ The Academic Management System (SGA) is a database project developed using **Pos
 ## 📚 Project Requirements (In Progress)
 
 - [x] Functional Specification
-- [ ] ER Model Design
-- [ ] Relational Model
-- [ ] Physical Model Draft
-- [ ] Database Creation (SQL DDL)
+- [x] ER Model Design
+- [x] Relational Model
+- [x] Physical Model Draft
+- [x] Database Creation (SQL DDL)
 - [ ] Sample Data Insertion (SQL DML)
-- [ ] Normalization to 4NF
+- [x] Normalization to 4NF
 - [ ] Queries and Reporting
 - [ ] Stored Procedures
 - [ ] Custom Functions
@@ -42,9 +42,9 @@ The Academic Management System (SGA) is a database project developed using **Pos
 | Phase                        | Status         |
 |-----------------------------|-----------------|
 | Requirement Analysis        | ✅ Completed    |
-| ER & Relational Modeling    | 🚧 In Progress  |
-| Database Creation           | 🚧 In Progress  |
-| Data Insertion              | 🚧 Pending      |
+| ER & Relational Modeling    | ✅ Completed    |
+| Database Creation           | ✅ Completed    |
+| Data Insertion              | 🚧 In Progress  |
 | Procedures & Functions      | ⏳ Not Started  |
 | Triggers & Auditing         | ⏳ Not Started  |
 | Documentation               | 🟡 In Progress  |
