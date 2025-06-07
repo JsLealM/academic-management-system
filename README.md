@@ -28,12 +28,12 @@ The Academic Management System (SGA) is a database project developed using **Pos
 - [x] Relational Model
 - [x] Physical Model Draft
 - [x] Database Creation (SQL DDL)
-- [ ] Sample Data Insertion (SQL DML)
+- [x] Sample Data Insertion (SQL DML)
 - [x] Normalization to 4NF
-- [ ] Queries and Reporting
-- [ ] Stored Procedures
-- [ ] Custom Functions
-- [ ] Audit Table and Triggers
+- [x] Queries and Reporting
+- [x] Stored Procedures
+- [x] Custom Functions
+- [x] Audit Table and Triggers
 
 ---
 
@@ -44,11 +44,11 @@ The Academic Management System (SGA) is a database project developed using **Pos
 | Requirement Analysis        | ✅ Completed    |
 | ER & Relational Modeling    | ✅ Completed    |
 | Database Creation           | ✅ Completed    |
-| Data Insertion              | 🚧 In Progress  |
-| Procedures & Functions      | ⏳ Not Started  |
-| Triggers & Auditing         | ⏳ Not Started  |
-| Documentation               | 🟡 In Progress  |
-| Final Testing & Queries     | ⏳ Not Started  |
+| Data Insertion              | ✅ Completed    |
+| Procedures & Functions      | ✅ Completed    | 
+| Triggers & Auditing         | ✅ Completed    |
+| Documentation               | ✅ Completed    |
+| Final Testing & Queries     | 🚧 In Progress  |
 
 ---
 
@@ -56,9 +56,9 @@ The Academic Management System (SGA) is a database project developed using **Pos
 
 | Name               | Role             |
 |--------------------|------------------|
-| Jefferson Pinzon   | Product Owner    |
-| Johan Leal         | Scrum Master     |
-| Briyith Moreno     | Development      |
+|  [@Jefferson Pinzon](https://github.com/S4LPICON) | Product Owner    |
+|  [@Johan Leal](https://github.com/JsLealM) | Scrum Master     |
+|  [@Briyith Moreno](https://github.com/Briyith-Moreno) | Development      |
 
 - **Team Name:** Dupl4
 - **Slogan:** "Se fue uno, y no hicimos INSERT para reemplazarlo."

@@ -2,19 +2,6 @@
 -- #            TableDefinitions                    #
 -- ##################################################
 
--- Table: SYSTEM_USER
--- Brief: System users with access roles and permissions for audit tracking
--- Fields: user_id (PK, auto-increment), full_name (varchar(255)), email (varchar(255), unique), 
---         position (varchar(75)), role (varchar(75))
-CREATE TABLE academic.SYSTEM_USER (
-    user_id SERIAL PRIMARY KEY,
-    full_name VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
-    position VARCHAR(75),
-    role VARCHAR(75) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
 -- Table: STUDENT
 -- Brief: Student information including personal details and academic status
 -- Fields: student_id (PK, integer), first_name (varchar(25)), middle_name (varchar(25)), 
@@ -28,8 +15,7 @@ CREATE TABLE academic.STUDENT (
     maternal_surname VARCHAR(25),
     birth_date DATE NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    status VARCHAR(20) DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE', 'GRADUATED', 'SUSPENDED')),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    status VARCHAR(20) DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE', 'INACTIVE', 'GRADUATED', 'SUSPENDED'))
 );
 
 -- Table: PROFESSOR
@@ -41,8 +27,7 @@ CREATE TABLE academic.PROFESSOR (
     first_name VARCHAR(25) NOT NULL,
     last_name VARCHAR(25) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
-    grade VARCHAR(75),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    grade VARCHAR(75)
 );
 
 -- Table: COURSE
@@ -52,8 +37,7 @@ CREATE TABLE academic.COURSE (
     course_id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     credits INTEGER NOT NULL CHECK (credits > 0),
-    type VARCHAR(12) NOT NULL CHECK (type IN ('CORE', 'ELECTIVE', 'MANDATORY')),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    type VARCHAR(12) NOT NULL CHECK (type IN ('CORE', 'ELECTIVE', 'MANDATORY'))
 );
 
 -- Table: PERIOD
@@ -64,7 +48,6 @@ CREATE TABLE academic.PERIOD (
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
     status VARCHAR(20) DEFAULT 'PLANNED' CHECK (status IN ('PLANNED', 'ACTIVE', 'COMPLETED', 'CANCELLED')),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_period_dates CHECK (end_date > start_date)
 );
 
@@ -74,8 +57,7 @@ CREATE TABLE academic.PERIOD (
 CREATE TABLE academic.ROOM (
     room_id SERIAL PRIMARY KEY,
     capacity INTEGER NOT NULL CHECK (capacity > 0),
-    location VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    location VARCHAR(255) NOT NULL
 );
 
 -- Table: ENROLLMENT
@@ -89,7 +71,6 @@ CREATE TABLE academic.ENROLLMENT (
     period_id VARCHAR(20) NOT NULL,
     enrollment_date DATE NOT NULL DEFAULT CURRENT_DATE,
     status VARCHAR(20) DEFAULT 'ENROLLED' CHECK (status IN ('ENROLLED', 'DROPPED', 'COMPLETED', 'FAILED')),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(student_id, course_id, period_id)
 );
 
@@ -101,7 +82,6 @@ CREATE TABLE academic.COURSE_ASSIGNMENT (
     course_id INTEGER NOT NULL,
     professor_id INTEGER NOT NULL,
     period_id VARCHAR(20) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(course_id, professor_id, period_id)
 );
 
@@ -114,11 +94,10 @@ CREATE TABLE academic.SCHEDULE (
     day VARCHAR(10) NOT NULL CHECK (day IN ('MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY')),
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
-    session_type VARCHAR(12) NOT NULL CHECK (session_type IN ('LECTURE', 'LAB', 'SEMINAR', 'TUTORIAL', 'EXAM')),
+    session_type VARCHAR(12) NOT NULL CHECK (session_type IN ('LECTURE', 'LAB', 'SEMINAR', 'TUTORIAL')),
     room_id INTEGER NOT NULL,
     course_id INTEGER NOT NULL,
     period_id VARCHAR(20) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_schedule_times CHECK (end_time > start_time)
 );
 
@@ -129,8 +108,7 @@ CREATE TABLE academic.EVALUATION (
     evaluation_id SERIAL PRIMARY KEY,
     type VARCHAR(20) NOT NULL CHECK (type IN ('EXAM', 'QUIZ', 'PROJECT', 'ASSIGNMENT', 'PRESENTATION')),
     date DATE NOT NULL,
-    course_id INTEGER NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    course_id INTEGER NOT NULL
 );
 
 -- Table: NOTE_EVALUATION
@@ -141,7 +119,6 @@ CREATE TABLE academic.NOTE_EVALUATION (
     student_id INTEGER NOT NULL,
     grade DECIMAL(5,2) NOT NULL CHECK (grade >= 0 AND grade <= 5),
     comments TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (evaluation_id, student_id)
 );
 
@@ -151,26 +128,38 @@ CREATE TABLE academic.NOTE_EVALUATION (
 CREATE TABLE academic.PREREQUISITE (
     course_id INTEGER NOT NULL,
     prerequisite_id INTEGER NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (course_id, prerequisite_id),
     CONSTRAINT chk_no_self_prerequisite CHECK (course_id != prerequisite_id)
 );
 
--- Table: AUDIT_LOG
+-- Table: STUDENT_AUDIT
 -- Brief: System audit trail for data changes and user actions with full tracking
--- Fields: log_id (PK, auto-increment), user_id (FK), table_name (varchar(100)), 
---         action_type (varchar(20)), action_timestamp (timestamp), previous_values (text), 
---         new_values (text), affected_row_id (int)
-CREATE TABLE academic.AUDIT_LOG (
+-- Fields: log_id (PK, auto-increment), user_id (FK), action_type (varchar(20)), 
+-- action_timestamp (timestamp), previous_values (text), 
+-- new_values (text), affected_row_id (int)
+CREATE TABLE academic.STUDENT_AUDIT (
     log_id SERIAL PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    table_name VARCHAR(100) NOT NULL,
     action_type VARCHAR(20) NOT NULL CHECK (action_type IN ('INSERT', 'UPDATE', 'DELETE','READ')),
+    student_id INTEGER NOT NULL,
+    --(UPDATE AND DELETE)
+    old_first_name VARCHAR(25),
+    old_middle_name VARCHAR(25),
+    old_last_name VARCHAR(25),
+    old_maternal_surname VARCHAR(25),
+    old_birth_date DATE,
+    old_email VARCHAR(255),
+    old_status VARCHAR(20),
+    --(INSERT AND UPDATE)
+    new_first_name VARCHAR(25),
+    new_middle_name VARCHAR(25),
+    new_last_name VARCHAR(25),
+    new_maternal_surname VARCHAR(25),
+    new_birth_date DATE,
+    new_email VARCHAR(255),
+    new_status VARCHAR(20),
     action_timestamp TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    previous_values TEXT,
-    new_values TEXT,
-    affected_row_id INTEGER,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    operation_user VARCHAR(100) DEFAULT CURRENT_USER,
+    session_username VARCHAR(100) DEFAULT SESSION_USER
 );
 
 -- ##################################################
@@ -203,9 +192,6 @@ ALTER TABLE academic.NOTE_EVALUATION ADD FOREIGN KEY (student_id) REFERENCES aca
 ALTER TABLE academic.PREREQUISITE ADD FOREIGN KEY (course_id) REFERENCES academic.COURSE (course_id);
 ALTER TABLE academic.PREREQUISITE ADD FOREIGN KEY (prerequisite_id) REFERENCES academic.COURSE (course_id);
 
--- Relationships for AUDIT_LOG
-ALTER TABLE academic.AUDIT_LOG ADD FOREIGN KEY (user_id) REFERENCES academic.SYSTEM_USER (user_id);
-
 -- ##################################################
 -- #            PERFORMANCE INDICES                 #
 -- ##################################################
@@ -219,8 +205,7 @@ CREATE INDEX idx_enrollment_course_period ON academic.ENROLLMENT (course_id, per
 CREATE INDEX idx_schedule_day_time ON academic.SCHEDULE (day, start_time, end_time);
 CREATE INDEX idx_schedule_room_period ON academic.SCHEDULE (room_id, period_id);
 CREATE INDEX idx_evaluation_course_date ON academic.EVALUATION (course_id, date);
-CREATE INDEX idx_audit_timestamp ON academic.AUDIT_LOG (action_timestamp);
-CREATE INDEX idx_audit_table_action ON academic.AUDIT_LOG (table_name, action_type);
+CREATE INDEX idx_audit_timestamp ON academic.STUDENT_AUDIT (action_timestamp);
 
 -- ##################################################
 -- #               END DOCUMENTATION                #
