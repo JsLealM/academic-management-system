@@ -1,4 +1,4 @@
-INSERT INTO academic.note_evaluation (evaluation_id, student_id, grade, comments)
+INSERT INTO academic.grade_evaluation (evaluation_id, student_id, grade, comments)
 VALUES
 (1, 1759942457, 4.5, 'Good performance'),
 (2, 1455144827, 3.8, 'Needs improvement on logic'),

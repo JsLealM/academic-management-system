@@ -2,22 +2,22 @@
 -- Fecha de generación: 2025-06-08
 
 -- 1. Top 5 estudiantes con mejor promedio en curso 1 durante 2025A
-SELECT ne.student_id, ROUND(AVG(ne.grade), 2) AS promedio
-FROM academic.note_evaluation ne
-INNER JOIN academic.evaluation ev ON ne.evaluation_id = ev.evaluation_id
+SELECT ge.student_id, ROUND(AVG(ge.grade), 2) AS promedio
+FROM academic.grade_evaluation ge
+INNER JOIN academic.evaluation ev ON ge.evaluation_id = ev.evaluation_id
 INNER JOIN academic.course_assignment ca ON ev.course_id = ca.course_id AND ca.period_id = '2025A'
 WHERE ev.course_id = 1
-GROUP BY ne.student_id
+GROUP BY ge.student_id
 ORDER BY promedio DESC
 LIMIT 5;
 
 -- 2. Cursos con promedio > 4.0 en 2025A
-SELECT ev.course_id, ROUND(AVG(ne.grade), 2) AS promedio
-FROM academic.note_evaluation ne
-INNER JOIN academic.evaluation ev ON ne.evaluation_id = ev.evaluation_id
+SELECT ev.course_id, ROUND(AVG(ge.grade), 2) AS promedio
+FROM academic.grade_evaluation ge
+INNER JOIN academic.evaluation ev ON ge.evaluation_id = ev.evaluation_id
 INNER JOIN academic.course_assignment ca ON ev.course_id = ca.course_id AND ca.period_id = '2025A'
 GROUP BY ev.course_id
-HAVING AVG(ne.grade) > 4.0;
+HAVING AVG(ge.grade) > 4.0;
 
 -- 3. Salones más usados en 2025A
 SELECT s.room_id, COUNT(*) AS sesiones
@@ -72,7 +72,7 @@ WHERE e.period_id = '2025A'
   );
 
 -- 10. Estudiantes con más notas y su promedio
-SELECT ne.student_id, COUNT(*) AS total_notas, ROUND(AVG(ne.grade), 2) AS promedio_general
-FROM academic.note_evaluation ne
-GROUP BY ne.student_id
+SELECT ge.student_id, COUNT(*) AS total_notas, ROUND(AVG(ge.grade), 2) AS promedio_general
+FROM academic.grade_evaluation ge
+GROUP BY ge.student_id
 ORDER BY total_notas DESC;

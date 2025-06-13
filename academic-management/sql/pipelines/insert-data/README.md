@@ -66,7 +66,7 @@ Si todo se ejecuta correctamente debe mostrar:
 2025-06-06 11:48:36,359 - INFO - ✅ ../../dml/insert\07-evaluation.sql executed successfully
 2025-06-06 11:48:37,376 - INFO - ✅ ../../dml/insert\08-schedule.sql executed successfully
 2025-06-06 11:48:38,393 - INFO - ✅ ../../dml/insert\09-enrollment.sql executed successfully
-2025-06-06 11:48:39,408 - INFO - ✅ ../../dml/insert\10-note_evaluation.sql executed successfully
+2025-06-06 11:48:39,408 - INFO - ✅ ../../dml/insert\10-grade_evaluation.sql executed successfully
 2025-06-06 11:48:40,422 - INFO - ✅ ../../dml/insert\11-prerequisite.sql executed successfully
 2025-06-06 11:48:41,423 - INFO - 🎓 Pipeline completed: 11/11 files loaded.
 2025-06-06 11:48:41,423 - INFO - 🔒 Database connection closed.
@@ -103,7 +103,7 @@ SELECT 'schedule', COUNT(*) FROM academic.schedule
 UNION ALL
 SELECT 'enrollment', COUNT(*) FROM academic.enrollment
 UNION ALL
-SELECT 'note_evaluation', COUNT(*) FROM academic.note_evaluation
+SELECT 'grade_evaluation', COUNT(*) FROM academic.grade_evaluation
 UNION ALL
 SELECT 'prerequisite', COUNT(*) FROM academic.prerequisite
 UNION ALL
@@ -118,7 +118,7 @@ La consulta debe mostrar:
  course_assignment |           13
  enrollment        |           10
  evaluation        |           10
- note_evaluation   |           10
+ grade_evaluation  |           10
  period            |           10
  prerequisite      |           10
  professor         |           10

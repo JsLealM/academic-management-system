@@ -188,7 +188,7 @@ Los archivos deben estar en el directorio especificado mediante `--sql-dir` o, s
            academic     | course_assignment
            academic     | evaluation
            academic     | professor
-           academic     | note_evaluation
+           academic     | grade_evaluation
            academic     | prerequisite
            academic     | student
            academic     | student_audit

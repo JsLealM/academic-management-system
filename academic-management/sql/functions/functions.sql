@@ -8,13 +8,13 @@ CREATE OR REPLACE FUNCTION academic.fn_avg_grade_by_course_period(
 RETURNS NUMERIC AS $$
 BEGIN
     RETURN (
-        SELECT AVG(ne.grade)
-        FROM academic.note_evaluation ne
+        SELECT AVG(ge.grade)
+        FROM academic.grade_evaluation ge
         INNER JOIN academic.evaluation ev 
-        ON ne.evaluation_id = ev.evaluation_id
+        ON ge.evaluation_id = ev.evaluation_id
         INNER JOIN academic.course_assignment ca 
         ON ca.course_id = ev.course_id AND ca.period_id = p_period_id
-        WHERE ne.student_id = p_student_id
+        WHERE ge.student_id = p_student_id
           AND ev.course_id = p_course_id
           AND ca.period_id = p_period_id
     );

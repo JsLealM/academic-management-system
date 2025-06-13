@@ -30,7 +30,7 @@ class SQLPipeline:
             '07-evaluation.sql',
             '08-schedule.sql',
             '09-enrollment.sql',
-            '10-note_evaluation.sql',
+            '10-grade_evaluation.sql',
             '11-prerequisite.sql'
         ]
         self.delay_between_files = self.args.delay

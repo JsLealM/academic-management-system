@@ -75,10 +75,10 @@ BEGIN
     ) THEN
         -- Solo insertar si el estudiante no tiene nota en esta evaluación
         IF NOT EXISTS (
-            SELECT 1 FROM academic.note_evaluation 
+            SELECT 1 FROM academic.grade_evaluation 
             WHERE evaluation_id = p_evaluation_id AND student_id = p_student_id
         ) THEN
-            INSERT INTO academic.note_evaluation (
+            INSERT INTO academic.grade_evaluation (
                 evaluation_id, student_id, grade, comments
             ) VALUES (
                 p_evaluation_id, p_student_id, p_grade, p_comment

@@ -1,14 +1,22 @@
 erDiagram
 
-  AUDIT_LOG {
-    int log_id PK
-    int user_id FK
-    string table_name
-    string action_type
-    datetime action_timestamp
-    string previous_values
-    string new_values
-    int affected_row_id
+  STUDENT {
+    int student_id PK
+    string first_name
+    string middle_name
+    string last_name
+    string maternal_surname
+    date birth_date
+    string email
+    string status
+  }
+
+  PROFESSOR {
+    int professor_id PK
+    string first_name
+    string last_name
+    string email
+    string grade
   }
 
   COURSE {
@@ -18,18 +26,17 @@ erDiagram
     string type
   }
 
-  COURSE_ASSIGNMENT {
-    int assignment_id PK
-    int course_id FK
-    int professor_id FK
-    string period_id FK
+  PERIOD {
+    string period_id PK
+    date start_date
+    date end_date
+    string status
   }
 
-  EVALUATION {
-    int evaluation_id PK
-    string type
-    date date
-    int course_id FK
+  ROOM {
+    int room_id PK
+    int capacity
+    string location
   }
 
   ENROLLMENT {
@@ -41,37 +48,11 @@ erDiagram
     string status
   }
 
-  NOTE_EVALUATION {
-    int evaluation_id PK
-    int student_id PK
-    float grade
-    string comments
-  }
-
-  PERIOD {
-    string period_id PK
-    date start_date
-    date end_date
-    string status
-  }
-
-  PREREQUISITE {
-    int course_id PK
-    int prerequisite_id PK
-  }
-
-  PROFESSOR {
-    int professor_id PK
-    string first_name
-    string last_name
-    string email
-    string degree
-  }
-
-  ROOM {
-    int room_id PK
-    int capacity
-    string location
+  COURSE_ASSIGNMENT {
+    int assignment_id PK
+    int course_id FK
+    int professor_id FK
+    string period_id FK
   }
 
   SCHEDULE {
@@ -85,45 +66,67 @@ erDiagram
     string period_id FK
   }
 
-  STUDENT {
-    int student_id PK
-    string first_name
-    string middle_name
-    string last_name
-    string maternal_surname
-    date birth_date
-    string email
-    string status
+  EVALUATION {
+    int evaluation_id PK
+    string type
+    date date
+    int course_id FK
   }
 
-  SYSTEM_USER {
-    int user_id PK
-    string full_name
-    string email
-    string position
-    string role
+  NOTE_EVALUATION {
+    int evaluation_id PK, FK
+    int student_id PK, FK
+    float grade
+    string comments
   }
 
-  %% Academic Relationships
+  PREREQUISITE {
+    int course_id PK, FK
+    int prerequisite_id PK, FK
+  }
+
+  STUDENT_AUDIT {
+    int log_id PK
+    string action_type
+    int student_id
+    string old_first_name
+    string old_middle_name
+    string old_last_name
+    string old_maternal_surname
+    date old_birth_date
+    string old_email
+    string old_status
+    string new_first_name
+    string new_middle_name
+    string new_last_name
+    string new_maternal_surname
+    date new_birth_date
+    string new_email
+    string new_status
+    timestamp action_timestamp
+    string operation_user
+    string session_username
+  }
+
+  %% Relationships
+
   STUDENT ||--o{ ENROLLMENT : enrolls
-  COURSE ||--o{ ENROLLMENT : includes
+  COURSE ||--o{ ENROLLMENT : contains
   PERIOD ||--o{ ENROLLMENT : occurs_in
 
-  COURSE ||--|{ EVALUATION : contains
-  EVALUATION ||--o{ NOTE_EVALUATION : evaluates
+  COURSE ||--o{ COURSE_ASSIGNMENT : assigned
+  PROFESSOR ||--o{ COURSE_ASSIGNMENT : teaches
+  PERIOD ||--o{ COURSE_ASSIGNMENT : scheduled_in
+
+  ROOM ||--o{ SCHEDULE : located_at
+  COURSE ||--o{ SCHEDULE : scheduled
+  PERIOD ||--o{ SCHEDULE : scheduled_during
+
+  COURSE ||--|{ EVALUATION : has
+  EVALUATION ||--o{ NOTE_EVALUATION : evaluated_for
   STUDENT ||--o{ NOTE_EVALUATION : receives
 
-  COURSE ||--o{ SCHEDULE : scheduled
-  PERIOD ||--o{ SCHEDULE : during
-  ROOM ||--o{ SCHEDULE : held_in
-
-  COURSE ||--o{ PREREQUISITE : requires
+  COURSE ||--o{ PREREQUISITE : has_prerequisite
   COURSE ||--o{ PREREQUISITE : is_prerequisite_of
 
-  %% Professor-Course Assignment
-  PROFESSOR ||--o{ COURSE_ASSIGNMENT : teaches
-  COURSE ||--o{ COURSE_ASSIGNMENT : assigned_to
-  PERIOD ||--o{ COURSE_ASSIGNMENT : during
-
-  %% System Audit
-  SYSTEM_USER ||--o{ AUDIT_LOG : logs
+  STUDENT ||--o{ STUDENT_AUDIT : has_audit_record

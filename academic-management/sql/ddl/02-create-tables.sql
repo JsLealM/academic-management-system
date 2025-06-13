@@ -111,13 +111,13 @@ CREATE TABLE academic.EVALUATION (
     course_id INTEGER NOT NULL
 );
 
--- Table: NOTE_EVALUATION
+-- Table: GRADE_EVALUATION
 -- Brief: Student grades and evaluation results with comments
--- Fields: evaluation_id (PK, FK), student_id (PK, FK), grade (decimal(5,2)), comments (text)
-CREATE TABLE academic.NOTE_EVALUATION (
+-- Fields: evaluation_id (PK, FK), student_id (PK, FK), grade (decimal(3,2)), comments (text)
+CREATE TABLE academic.GRADE_EVALUATION (
     evaluation_id INTEGER NOT NULL,
     student_id INTEGER NOT NULL,
-    grade DECIMAL(5,2) NOT NULL CHECK (grade >= 0 AND grade <= 5),
+    grade DECIMAL(3,2) NOT NULL CHECK (grade >= 0 AND grade <= 5),
     comments TEXT,
     PRIMARY KEY (evaluation_id, student_id)
 );
@@ -139,7 +139,7 @@ CREATE TABLE academic.PREREQUISITE (
 -- new_values (text), affected_row_id (int)
 CREATE TABLE academic.STUDENT_AUDIT (
     log_id SERIAL PRIMARY KEY,
-    action_type VARCHAR(20) NOT NULL CHECK (action_type IN ('INSERT', 'UPDATE', 'DELETE','READ')),
+    action_type VARCHAR(20) NOT NULL CHECK (action_type IN ('INSERT', 'UPDATE', 'DELETE')),
     student_id INTEGER NOT NULL,
     --(UPDATE AND DELETE)
     old_first_name VARCHAR(25),
@@ -184,9 +184,9 @@ ALTER TABLE academic.SCHEDULE ADD FOREIGN KEY (period_id) REFERENCES academic.PE
 -- Relationships for EVALUATION
 ALTER TABLE academic.EVALUATION ADD FOREIGN KEY (course_id) REFERENCES academic.COURSE (course_id);
 
--- Relationships for NOTE_EVALUATION
-ALTER TABLE academic.NOTE_EVALUATION ADD FOREIGN KEY (evaluation_id) REFERENCES academic.EVALUATION (evaluation_id);
-ALTER TABLE academic.NOTE_EVALUATION ADD FOREIGN KEY (student_id) REFERENCES academic.STUDENT (student_id);
+-- Relationships for GRADE_EVALUATION
+ALTER TABLE academic.GRADE_EVALUATION ADD FOREIGN KEY (evaluation_id) REFERENCES academic.EVALUATION (evaluation_id);
+ALTER TABLE academic.GRADE_EVALUATION ADD FOREIGN KEY (student_id) REFERENCES academic.STUDENT (student_id);
 
 -- Relationships for PREREQUISITE
 ALTER TABLE academic.PREREQUISITE ADD FOREIGN KEY (course_id) REFERENCES academic.COURSE (course_id);
