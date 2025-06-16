@@ -31,16 +31,21 @@ Los archivos deben estar en el directorio especificado mediante `--sql-dir` o, s
 
 1. Para ejecutar tu script, ve hasta la ruta donde tienes el script, la cual es `pipelines/pipeline-create-auto/`.
 2. Activa tu entorno virtual `.\venv\Scripts\activate` y asegurate que las dependencias en el paso de _Instalación_ estén correctamente instaladas.
-3. Prueba el script `test_connection` para validar si tu script y conección local es exitosa de la siguiente manera
-   
-    **Console**
+3. Prueba el script `test_connection` para validar si tu script y conexión(local o remota) es exitosa de la siguiente manera
+
+    **Console para Forma Local**
     ```shell
     python .\test_connection.py localhost 5432 postgres your_password
-    ``` 
+    ```
+    **Console para Forma Remota**
+    ```shell
+    python .\test_connection.py endpoint 5432 postgres your_password
+    ```
+
     **Console Output**
     ```shell
     === Testing PostgreSQL Connection ===
-    Host: localhost
+    Host: localhost #or endpoint
     Port: 5432
     User: postgres
     Password: *********
@@ -57,14 +62,47 @@ Los archivos deben estar en el directorio especificado mediante `--sql-dir` o, s
     ✅ Connection successful (Method 3)!
     ```
 
-4. Luego de validar, que el usuario si se puede conectar, viene la creación completa de la base de datos y sus tablas, para lograr esto se requiere que la ejecución se haga en **dos pasos independientes**, uno con el usuario administrador (`postgres`) y otro con el nuevo usuario de la aplicación (`sga_admin`):
+4. Luego de validar, que el usuario si se puede conectar, viene la creación completa de la base de datos y sus tablas, para lograr esto se requiere que la ejecución se haga en **cuatro pasos independientes**, uno con el usuario administrador (`postgres`) y otro con el nuevo usuario de la aplicación (`sga_admin` o `rds_user_test`):
+    
+   0. **🧩 Paso 0: Seleccionar el archivo correcto de creación de base de datos** 
+   Antes de ejecutar cualquier pipeline, es esencial preparar el archivo que crea la base de datos. Este archivo varía dependiendo de si estás trabajando de forma **local** o en un entorno **AWS remoto**.
+
+      📁 Ruta del archivo   
+      Desde la **raíz del proyecto**, navega manualmente (sin     terminal) siguiendo esta ruta:
+      ```bash
+      sql → ddl
+      ```
+      Dentro encontrarás dos archivos:
+
+      - `01-create-database-local.sql`
+      - `01-create-database-aws.sql`
+
+      ### 🧪 ¿Qué hacer según tu entorno?
+
+      | Entorno de trabajo | Acción requerida |
+      |--------------------|------------------|
+      | **Local**          | Cambia el nombre de `01-create-database-local.sql` a `01-create-database.sql` |
+      | **AWS**            | Cambia el nombre de `01-create-database-aws.sql` a `01-create-database.sql`   |
+
+      > ⚠️ **Importante:** Solo debe existir un archivo llamado `01-create-database.sql` a la vez.  
+      > Los scripts en esta carpeta se ejecutan en orden secuencial, así que este paso es fundamental para que la creación de la base de datos comience correctamente.
+
+
    1. **🧩 Paso 1: Crear la base de datos y el esquema (como `postgres`)**
         
         Ejecuta el siguiente script, en una sola linea en la terminar actual, que tiene el entorno virtual activo y en la misma ruta
+
+        **Console para Forma Local**  
       ```bash
       python sql_pipeline_auto.py --user postgres --password "your_password" --db-name postgres --sql-dir ../../ddl --use-sql-for-db-creation
       ```
-      **Console Output**
+
+        **Console para Forma Remota**
+      ```bash
+      python sql_pipeline_auto.py --host endpoint --user postgres --password "master_password" --db-name postgres --sql-dir ../../ddl --use-sql-for-db-creation
+      ```
+
+      **Console Output Local**
       ```shell
       2025-05-01 15:39:44,416 - sql_pipeline - INFO - Connecting to PostgreSQL at localhost:5432 with user postgres
       2025-05-01 15:39:44,416 - sql_pipeline - INFO - Using database: postgres, schema: academic
@@ -81,6 +119,26 @@ Los archivos deben estar en el directorio especificado mediante `--sql-dir` o, s
       2025-05-01 15:39:44,783 - sql_pipeline - INFO - Successfully executed SQL file: ../../ddl\01-create-database.sql
       2025-05-01 15:39:44,783 - sql_pipeline - INFO - Database created!
       2025-05-01 15:39:44,783 - sql_pipeline - INFO - SQL Pipeline completed successfully
+      ```
+      **Console Output Remota**
+      ```shell
+      2025-06-15 11:43:58,070 - sql_pipeline - INFO - Using database: postgres, schema: academic
+      2025-06-15 11:43:58,070 - sql_pipeline - INFO - SQL directory: ../../ddl
+      2025-06-15 11:43:58,070 - sql_pipeline - INFO - Using SQL directory: ../../ddl
+      2025-06-15 11:43:58,725 - sql_pipeline - INFO - Connected to PostgreSQL
+      2025-06-15 11:43:58,726 - sql_pipeline - INFO - Executing database creation script: ../../ddl\01-create-database.sql
+      2025-06-15 11:43:58,726 - sql_pipeline - INFO - Executing SQL statement 1 of 9
+      2025-06-15 11:43:58,818 - sql_pipeline - INFO - Executing SQL statement 2 of 9
+      2025-06-15 11:43:58,897 - sql_pipeline - INFO - Executing SQL statement 3 of 9
+      2025-06-15 11:43:59,453 - sql_pipeline - INFO - Executing SQL statement 4 of 9
+      2025-06-15 11:43:59,528 - sql_pipeline - INFO - Executing SQL statement 5 of 9
+      2025-06-15 11:43:59,603 - sql_pipeline - INFO - Executing SQL statement 6 of 9
+      2025-06-15 11:43:59,682 - sql_pipeline - INFO - Executing SQL statement 7 of 9
+      2025-06-15 11:43:59,758 - sql_pipeline - INFO - Executing SQL statement 8 of 9
+      2025-06-15 11:43:59,835 - sql_pipeline - INFO - Executing SQL statement 9 of 9
+      2025-06-15 11:43:59,916 - sql_pipeline - INFO - Successfully executed SQL file: ../../ddl\01-create-database.sql
+      2025-06-15 11:43:59,917 - sql_pipeline - INFO - Database created!
+      2025-06-15 11:43:59,917 - sql_pipeline - INFO - SQL Pipeline completed successfully
       ``` 
     - Abrir una conexión desde SQL-Shell y validar si la base de datos y el usuario se crearon con la siguiente consulta
       ```sql
@@ -106,21 +164,26 @@ Los archivos deben estar en el directorio especificado mediante `--sql-dir` o, s
         ----------+---------------
         rol      | sga_admin
         database | academic_management_database
-        schema   | academic
-        (3 filas)
+        (2 filas)
       ```
    - Este paso ejecuta `01-create-database.sql` dentro de la base `postgres`. Aquí se crea:
 
-     - El nuevo usuario (`sga_admin`)
+     - El nuevo rol (`sga_admin`)
      - La base de datos `academic_management_database`
      - El esquema `academic` en esa base
      - Comentarios opcionales
 ---
-   2. **🧩 Paso 2: Crear tablas y cargar datos (como `sga_admin`)**
+   2. **🧩 Paso 2: Crear tablas y cargar datos (como `sga_admin` o `rds_user_test`)**
         
         Ejecuta el siguiente script, en una sola linea en la terminar actual, que tiene el entorno virtual activo y en la misma ruta
+
+      **Console Forma Local**  
       ```bash
       python sql_pipeline_auto.py --user sga_admin --password "password_academic_user" --db-name academic_management_database --sql-dir ../../ddl
+      ```
+      **Console Forma Remota**
+      ```bash
+      python sql_pipeline_auto.py --host endpoint --user rds_user_test --password "user_password" --db-name academic_management_database --sql-dir ../../ddl
       ```
 
       **Console Output**
@@ -171,7 +234,7 @@ Los archivos deben estar en el directorio especificado mediante `--sql-dir` o, s
       2025-06-06 11:39:37,442 - sql_pipeline - INFO - Successfully executed SQL file: ../../ddl\02-create-tables.sql
       2025-06-06 11:39:37,442 - sql_pipeline - INFO - SQL Pipeline completed successfully
       ```
-      - Abrir una conexión desde SQL-Shell y conectarse con el usuario `sga_admin` y la base de datos `academic_management_database` y validar si las tablas están creadas en el esquema con la siguiente consulta
+      - Abrir una conexión desde SQL-Shell y conectarse con el usuario (`sga_admin` o `rds_user_test`) y la base de datos `academic_management_database` y validar si las tablas están creadas en el esquema con la siguiente consulta
   
         ```sql
         SELECT table_schema, table_name
@@ -204,8 +267,14 @@ Los archivos deben estar en el directorio especificado mediante `--sql-dir` o, s
      
    3. **🧩 Paso 3: Crear Funcion y Trigger de Auditoria**
       Ejecuta el siguiente script, en una sola linea en la terminar actual, que tiene el entorno virtual activo y en la misma ruta
+
+      **Console Forma Local**
       ```bash
       python execute_triggers.py --host localhost --port 5432 --user sga_admin --password "your_password" --database academic_management_database --sql-file ../../ddl/03-create-trigger.sql
+      ```
+      **Console Forma Remota**
+      ```bash
+      python execute_triggers.py --host endpoint --port 5432 --user rds_user_test --password "user_password" --database academic_management_database --sql-file ../../ddl/03-create-trigger.sql
       ```
 
       **Console Output**
@@ -214,8 +283,8 @@ Los archivos deben estar en el directorio especificado mediante `--sql-dir` o, s
       ==================================================
       🔄 Executing SQL file: ../../ddl/03-create-trigger.sql
       📍 Database: academic_management_database
-      🖥️  Server: localhost:5432
-      👤 User: sga_admin
+      🖥️  Server: localhost:5432 #or endpoint:5432
+      👤 User: sga_admin #or rds_user_test
       --------------------------------------------------
       ✅ Output:
       CREATE FUNCTION
@@ -227,7 +296,7 @@ Los archivos deben estar en el directorio especificado mediante `--sql-dir` o, s
       📝 Trigger 'trigger_audit_student' has been created
       📊 Function 'audit_student_changes()' is ready      
       ```
-      - Abrir una conexión desde SQL-Shell y conectarse con el usuario `sga_admin` y la base de datos `academic_management_database` y validar si el trigger esta creado. Haz lo siguiente:
+      - Abrir una conexión desde SQL-Shell y conectarse con el usuario (`sga_admin` o `rds_user_test`) y la base de datos `academic_management_database` y validar si el trigger esta creado. Haz lo siguiente:
 
         ```sql
         \df academic.audit_student_changes;
@@ -283,6 +352,6 @@ Los archivos deben estar en el directorio especificado mediante `--sql-dir` o, s
 
 ## Notas Importantes
 
-- **No ejecutes ambos pasos con el mismo usuario**: el primer paso requiere privilegios administrativos (`postgres`) y el segundo, el usuario creado (`sga_admin`).
+- **No ejecutes ambos pasos con el mismo usuario**: el primer paso requiere privilegios administrativos (`postgres`) y el segundo, el usuario creado (`sga_admin` o `rds_user_test`).
 - Si `01-create-database.sql` no existe, el script puede crear la base de datos y el esquema directamente desde código (modo alternativo).
 - Para mayor seguridad, usa variables de entorno para las credenciales.

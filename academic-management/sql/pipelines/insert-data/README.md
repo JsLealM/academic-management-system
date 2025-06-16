@@ -50,8 +50,15 @@ pip install psycopg2-binary tqdm
 
 ### 5. Ejecutar pipeline de inserción 🚀
 Desde la carpeta insert-data:
+
+**Console forma Local**
 ```bash
 python academic_pipeline.py --user sga_admin --password "your-password" --db-name academic_management_database --schema-name academic --sql-dir ../../dml/insert
+```
+
+**Console forma Remota**
+```bash
+python academic_pipeline.py --host endpoint --user rds_user_test --password "user_password" --db-name academic_management_database --schema-name academic --sql-dir ../../dml/insert
 ```
 Si todo se ejecuta correctamente debe mostrar:
 ```bash
@@ -78,8 +85,15 @@ Para verificar que todos los datos se han insertado correctamente, puedes ejecut
 
 ### Conexión a PostgreSQL
 
+
+**Conectarse a Base de Datos Local**
 ```bash
 psql -U sga_admin -d academic_management_database -p 5432
+```
+
+**Conectarse a Base de Datos Remota**
+```bash
+psql -h endpoint -U rds_user_test -d academic_management_database -p 5432
 ```
 
 ### Consulta de Validación
