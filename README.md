@@ -65,6 +65,15 @@ The Academic Management System (SGA) is a database project developed using **Pos
 
 ---
 
+## 🌐 Project Links
+
+| Module     | Repository / Deployment Link                            |
+|------------|----------------------------------------------------------|
+| Backend    | [SGA Backend GitHub Repo](https://github.com/JsLealM/backend-bdi-sga.git) |
+| Frontend   | [SGA Frontend GitHub Repo](https://github.com/JsLealM/frontend-bdi-sga.git) |
+
+---
+
 ## 📌 Notes
 - All advanced database features have been fully implemented:
   - Stored procedures
